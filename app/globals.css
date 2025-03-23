@@ -24,3 +24,49 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+
+/* Markdown 스타일 개선 */
+.prose-invert {
+  color: #fff;
+}
+
+.prose-invert h1,
+.prose-invert h2,
+.prose-invert h3,
+.prose-invert strong {
+  color: #fff;
+}
+
+.prose-invert ul > li::marker {
+  color: #3b82f6;
+}
+
+/* 보고서 Markdown 추가 스타일 (바로 아래에 추가!) */
+.markdown-report h1, 
+.markdown-report h2, 
+.markdown-report h3, 
+.markdown-report h4 {
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+  color: #ffffff;
+}
+
+.markdown-report p, .markdown-report li {
+  margin-bottom: 1rem;
+  line-height: 1.8;
+  color: #e2e8f0;
+}
+
+.markdown-report ul, .markdown-report ol {
+  padding-left: 1.5rem;
+}
+
+.markdown-report {
+  white-space: normal;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
