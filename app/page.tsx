@@ -18,8 +18,6 @@ const symbols = [
   { id: 'PEPE', icon: 'https://assets.coingecko.com/coins/images/29850/large/pepe-token.jpeg' },
 ];
 
-
-
 export default function Home() {
   const [selectedSymbol, setSelectedSymbol] = useState('');
   const [analysis, setAnalysis] = useState('');
@@ -42,16 +40,16 @@ export default function Home() {
   };
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-[#121212] text-white">
-      <div className="p-8 bg-[#1e1e1e] rounded-xl shadow-md w-[800px] text-center">
-        <h1 className="text-4xl font-bold mb-8">🚀 CryptoStrategy AI</h1>
+    <main className="flex min-h-screen flex-col items-center justify-center bg-[#121212] text-white p-4">
+      <div className="bg-[#1e1e1e] rounded-xl shadow-md w-full max-w-3xl text-center p-6">
+        <h1 className="text-3xl sm:text-4xl font-bold mb-6">🚀 CryptoStrategy AI</h1>
 
-        <div className="grid grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mb-6">
           {symbols.map(({ id, icon }) => (
             <button
               key={id}
               onClick={() => handleAnalyze(id)}
-              className={`p-3 rounded-xl font-semibold flex items-center justify-center gap-2 transition ${
+              className={`p-3 rounded-xl font-semibold flex flex-col items-center justify-center gap-1 transition ${
                 selectedSymbol === id
                   ? 'bg-blue-500'
                   : 'bg-[#2e2e2e] hover:bg-blue-600'
@@ -61,9 +59,9 @@ export default function Home() {
               <img
                 src={icon}
                 alt={id}
-                className="w-6 h-6"
+                className="w-8 h-8"
               />
-              {id}
+              <span>{id}</span>
             </button>
           ))}
         </div>
@@ -71,7 +69,7 @@ export default function Home() {
         {loading && <div className="mb-4 text-blue-300">📡 분석 중입니다...</div>}
 
         {analysis && (
-          <div className="mt-6 text-left bg-[#2e2e2e] p-6 rounded-xl leading-loose tracking-wide markdown-report">
+          <div className="mt-6 text-left bg-[#2e2e2e] p-4 rounded-xl leading-relaxed tracking-wide markdown-report">
             <ReactMarkdown>{analysis}</ReactMarkdown>
           </div>
         )}
