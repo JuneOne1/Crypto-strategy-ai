@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
+import ChartComponent from './components/ChartComponent';
 
 const symbols = [
   { id: 'BTC', icon: 'https://assets.coingecko.com/coins/images/1/large/bitcoin.png' },
@@ -40,15 +41,10 @@ export default function Home() {
   };
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-[#121212] text-white p-2 sm:p-4">
-      <div className="bg-[#1e1e1e] rounded-xl shadow-md w-full max-w-xl text-center p-4 sm:p-6">
+    <main className="min-h-screen bg-gray-900 text-white p-2 sm:p-4 flex flex-col items-center">
+      <div className="bg-[#1e1e1e] rounded-xl shadow-md w-full max-w-xl text-center p-4 sm:p-6 mb-6">
         <h1 className="text-2xl sm:text-3xl font-bold mb-4">🚀 CryptoStrategy AI</h1>
 
-        {/* 
-          grid-cols-3 : 기본 3열 
-          sm:grid-cols-4 : 작은 화면 이상에서는 4열 
-          gap-2 : 버튼 간격 좁게 
-        */}
         <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 mb-4">
           {symbols.map(({ id, icon }) => (
             <button
@@ -76,6 +72,9 @@ export default function Home() {
         {analysis && (
           <div className="mt-4 text-left bg-[#2e2e2e] p-3 rounded-md leading-relaxed tracking-wide markdown-report">
             <ReactMarkdown>{analysis}</ReactMarkdown>
+            <div className="mt-4">
+              <ChartComponent symbol={selectedSymbol} />
+            </div>
           </div>
         )}
       </div>
