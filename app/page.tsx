@@ -40,16 +40,21 @@ export default function Home() {
   };
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-[#121212] text-white p-4">
-      <div className="bg-[#1e1e1e] rounded-xl shadow-md w-full max-w-3xl text-center p-6">
-        <h1 className="text-3xl sm:text-4xl font-bold mb-6">🚀 CryptoStrategy AI</h1>
+    <main className="flex min-h-screen flex-col items-center justify-center bg-[#121212] text-white p-2 sm:p-4">
+      <div className="bg-[#1e1e1e] rounded-xl shadow-md w-full max-w-xl text-center p-4 sm:p-6">
+        <h1 className="text-2xl sm:text-3xl font-bold mb-4">🚀 CryptoStrategy AI</h1>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mb-6">
+        {/* 
+          grid-cols-3 : 기본 3열 
+          sm:grid-cols-4 : 작은 화면 이상에서는 4열 
+          gap-2 : 버튼 간격 좁게 
+        */}
+        <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 mb-4">
           {symbols.map(({ id, icon }) => (
             <button
               key={id}
               onClick={() => handleAnalyze(id)}
-              className={`p-3 rounded-xl font-semibold flex flex-col items-center justify-center gap-1 transition ${
+              className={`p-2 rounded-lg text-sm flex flex-col items-center justify-center gap-1 transition ${
                 selectedSymbol === id
                   ? 'bg-blue-500'
                   : 'bg-[#2e2e2e] hover:bg-blue-600'
@@ -59,7 +64,7 @@ export default function Home() {
               <img
                 src={icon}
                 alt={id}
-                className="w-8 h-8"
+                className="w-6 h-6"
               />
               <span>{id}</span>
             </button>
@@ -69,7 +74,7 @@ export default function Home() {
         {loading && <div className="mb-4 text-blue-300">📡 분석 중입니다...</div>}
 
         {analysis && (
-          <div className="mt-6 text-left bg-[#2e2e2e] p-4 rounded-xl leading-relaxed tracking-wide markdown-report">
+          <div className="mt-4 text-left bg-[#2e2e2e] p-3 rounded-md leading-relaxed tracking-wide markdown-report">
             <ReactMarkdown>{analysis}</ReactMarkdown>
           </div>
         )}
