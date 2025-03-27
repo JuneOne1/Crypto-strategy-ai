@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import ChartComponent from './components/ChartComponent';
+import Image from 'next/image';
 
 const symbols = [
   { id: 'BTC', icon: 'https://assets.coingecko.com/coins/images/1/large/bitcoin.png' },
@@ -57,9 +58,11 @@ export default function Home() {
               }`}
               disabled={loading}
             >
-              <img
+              <Image
                 src={icon}
                 alt={id}
+                width={24}
+                height={24}
                 className="w-6 h-6"
               />
               <span>{id}</span>
