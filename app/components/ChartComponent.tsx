@@ -28,7 +28,7 @@ interface ChartComponentProps {
   symbol: string;
 }
 
-// 1) Binance Kline 타입 정의
+// Binance Kline 타입 정의
 type BinanceKline = [
   openTime: number,
   open: string,
@@ -44,20 +44,25 @@ type BinanceKline = [
   ignore: string
 ];
 
+interface MACDData {
+  MACD: number;
+  signal: number;
+  histogram: number;
+}
+
 export default function ChartComponent({ symbol }: ChartComponentProps) {
   const [rsiData, setRsiData] = useState<number[]>([]);
   const [labels, setLabels] = useState<string[]>([]);
-  const [macdData, setMacdData] = useState<{ MACD: number; signal: number; histogram: number }[]>([]);
+  const [macdData, setMacdData] = useState<MACDData[]>([]);
 
   useEffect(() => {
     async function fetchData() {
       try {
         const pair = symbol + 'USDT';
         const res = await fetch(`https://api.binance.com/api/v3/klines?symbol=${pair}&interval=1h&limit=100`);
-        const ohlc: BinanceKline[] = await res.json(); 
-        // 2) 이제 ohlc는 BinanceKline[] 타입
+        const ohlc: BinanceKline[] = await res.json();
 
-        // 3) 종가(Close)와 시간 추출
+        // 종가와 시간 추출
         const closes = ohlc.map((candle) => parseFloat(candle[4]));
         const times = ohlc.map((candle) => new Date(candle[0]).toLocaleTimeString());
 
@@ -75,18 +80,24 @@ export default function ChartComponent({ symbol }: ChartComponentProps) {
           SimpleMAOscillator: false,
           SimpleMASignal: false,
         });
-        setMacdData(macdValues);
+        
+        // MACD 값이 undefined인 경우를 처리하여 기본값 0으로 치환
+        const formattedMacd = macdValues.map((item) => ({
+          MACD: item.MACD ?? 0,
+          signal: item.signal ?? 0,
+          histogram: item.histogram ?? 0,
+        }));
+        setMacdData(formattedMacd);
       } catch (error) {
         console.error('Error fetching chart data:', error);
       }
     }
-
     if (symbol) {
       fetchData();
     }
   }, [symbol]);
 
-  // RSI 차트
+  // RSI 차트 데이터 구성
   const rsiChartData = {
     labels: labels,
     datasets: [
@@ -100,8 +111,8 @@ export default function ChartComponent({ symbol }: ChartComponentProps) {
     ],
   };
 
-  // MACD 차트
-  const macdLabels = labels.slice(12);
+  // MACD 차트 데이터 구성
+  const macdLabels = labels.slice(12); // MACD는 늦게 시작하므로 라벨을 슬라이스
   const macdLine = macdData.map((item) => item.MACD);
   const signalLine = macdData.map((item) => item.signal);
   const histogramLine = macdData.map((item) => item.histogram);
@@ -152,13 +163,13 @@ export default function ChartComponent({ symbol }: ChartComponentProps) {
       <div className="mb-4 text-left">
         <h2 className="text-xl font-bold">MACD</h2>
         <p className="text-sm text-gray-300 mt-1">
-          MACD(Moving Average Convergence Divergence)는 단기(보통 12기간)와 장기(보통 26기간) 이동평균의 차이를 나타내는 지표입니다. 
+          MACD(Moving Average Convergence Divergence)는 단기(보통 12기간)와 장기(보통 26기간) 이동평균의 차이를 나타냅니다.
           <br /><br />
-          <span className="font-semibold">시그널 선</span>은 MACD의 9기간 이동평균으로, MACD 선과의 차이를 보여줍니다. 
+          <span className="font-semibold">시그널 선</span>은 MACD의 9기간 이동평균으로, MACD 선과의 차이를 보여줍니다.
           MACD 선이 시그널 선을 상향 돌파하면 매수 신호, 하향 돌파하면 매도 신호로 해석할 수 있습니다.
           <br /><br />
-          <span className="font-semibold">히스토그램</span>은 MACD 선과 시그널 선의 차이를 나타내며, 양수이면 상승 모멘텀이 강하다는 의미, 
-          음수이면 하락 모멘텀이 강하다는 의미로 해석할 수 있습니다.
+          <span className="font-semibold">히스토그램</span>은 MACD 선과 시그널 선의 차이를 나타내며,
+          양수이면 상승 모멘텀이 강하다는 의미, 음수이면 하락 모멘텀이 강하다는 의미로 해석할 수 있습니다.
         </p>
       </div>
       <Line data={macdChartData} />
