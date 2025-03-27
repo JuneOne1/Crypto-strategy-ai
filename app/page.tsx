@@ -43,7 +43,8 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-gray-900 text-white p-2 sm:p-4 flex flex-col items-center">
-      <div className="bg-[#1e1e1e] rounded-xl shadow-md w-full max-w-xl text-center p-4 sm:p-6 mb-6">
+      {/* 상단 컨테이너: 버튼 목록 (폭: max-w-3xl) */}
+      <div className="bg-[#1e1e1e] rounded-xl shadow-md w-full max-w-3xl text-center p-4 sm:p-6 mb-6">
         <h1 className="text-2xl sm:text-3xl font-bold mb-4">🚀 CryptoStrategy AI</h1>
 
         <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 mb-4">
@@ -51,7 +52,7 @@ export default function Home() {
             <button
               key={id}
               onClick={() => handleAnalyze(id)}
-              className={`p-2 rounded-lg text-sm flex flex-col items-center justify-center gap-1 transition ${
+              className={`p-2 rounded-lg text-sm flex items-center justify-center gap-2 transition ${
                 selectedSymbol === id
                   ? 'bg-blue-500'
                   : 'bg-[#2e2e2e] hover:bg-blue-600'
@@ -71,16 +72,19 @@ export default function Home() {
         </div>
 
         {loading && <div className="mb-4 text-blue-300">📡 분석 중입니다...</div>}
+      </div>
 
-        {analysis && (
-          <div className="mt-4 text-left bg-[#2e2e2e] p-3 rounded-md leading-relaxed tracking-wide markdown-report">
+      {/* 하단 컨테이너: 분석 결과 + 차트 (폭: max-w-3xl) */}
+      {analysis && (
+        <div className="bg-[#1e1e1e] rounded-xl shadow-md w-full max-w-3xl p-4 sm:p-6 mb-6">
+          <div className="text-left bg-[#2e2e2e] p-4 rounded-md leading-relaxed tracking-wide markdown-report">
             <ReactMarkdown>{analysis}</ReactMarkdown>
             <div className="mt-4">
               <ChartComponent symbol={selectedSymbol} />
             </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </main>
   );
 }
