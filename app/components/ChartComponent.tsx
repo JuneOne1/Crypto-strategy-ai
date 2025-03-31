@@ -28,36 +28,6 @@ interface ChartComponentProps {
   symbol: string;
 }
 
-export default function ChartComponent({ symbol }: ChartComponentProps) {
-  // ... (RSI, MACD 계산 로직은 동일)
-
-  // 차트 옵션에서 maintainAspectRatio를 false로 설정
-  const chartOptions = {
-    responsive: true,
-    maintainAspectRatio: false, // ← 핵심!
-    scales: {
-      y: {
-        // 예: 필요하면 y축 범위 등 설정
-        beginAtZero: false,
-      },
-    },
-  };
-
-  return (
-    <div className="w-full max-w-xl mx-auto p-4">
-      {/* 
-        컨테이너에 고정 높이를 줘서 차트가 세로로 여유를 갖도록 함
-        예: h-64 => 약 16rem (256px)
-        필요하다면 h-80(320px) 등 다른 값으로 조정 가능
-      */}
-      <div className="relative w-full h-64 sm:h-80">
-        <Line data={/* RSI나 MACD 차트 데이터 */} options={chartOptions} />
-      </div>
-    </div>
-  );
-}
-
-// Binance Kline 타입 정의
 type BinanceKline = [
   openTime: number,
   open: string,
@@ -90,17 +60,12 @@ export default function ChartComponent({ symbol }: ChartComponentProps) {
         const pair = symbol + 'USDT';
         const res = await fetch(`https://api.binance.com/api/v3/klines?symbol=${pair}&interval=1h&limit=100`);
         const ohlc: BinanceKline[] = await res.json();
-
-        // 종가와 시간 추출
         const closes = ohlc.map((candle) => parseFloat(candle[4]));
         const times = ohlc.map((candle) => new Date(candle[0]).toLocaleTimeString());
-
-        // RSI 계산
         const rsiValues = RSI.calculate({ values: closes, period: 14 });
         setRsiData(rsiValues);
         setLabels(times.slice(14));
 
-        // MACD 계산
         const macdValues = MACD.calculate({
           values: closes,
           fastPeriod: 12,
@@ -109,8 +74,6 @@ export default function ChartComponent({ symbol }: ChartComponentProps) {
           SimpleMAOscillator: false,
           SimpleMASignal: false,
         });
-        
-        // MACD 값이 undefined인 경우를 처리하여 기본값 0으로 치환
         const formattedMacd = macdValues.map((item) => ({
           MACD: item.MACD ?? 0,
           signal: item.signal ?? 0,
@@ -126,7 +89,6 @@ export default function ChartComponent({ symbol }: ChartComponentProps) {
     }
   }, [symbol]);
 
-  // RSI 차트 데이터 구성
   const rsiChartData = {
     labels: labels,
     datasets: [
@@ -140,8 +102,7 @@ export default function ChartComponent({ symbol }: ChartComponentProps) {
     ],
   };
 
-  // MACD 차트 데이터 구성
-  const macdLabels = labels.slice(12); // MACD는 늦게 시작하므로 라벨을 슬라이스
+  const macdLabels = labels.slice(12);
   const macdLine = macdData.map((item) => item.MACD);
   const signalLine = macdData.map((item) => item.signal);
   const histogramLine = macdData.map((item) => item.histogram);
@@ -175,33 +136,24 @@ export default function ChartComponent({ symbol }: ChartComponentProps) {
 
   return (
     <div className="w-full max-w-xl mx-auto p-4">
-      {/* RSI 영역 */}
       <div className="mb-6">
-        <div className="mb-4 text-left">
-          <h2 className="text-xl font-bold">RSI(14)</h2>
-          <p className="text-sm text-gray-300 mt-1">
-            RSI(Relative Strength Index)는 가격의 상승 압력과 하락 압력을 비교하여 매수/매도 강도를 나타내는 지표입니다.
-            일반적으로 RSI 값이 <span className="font-semibold">70 이상</span>이면 과매수 상태, 
-            <span className="font-semibold"> 30 이하</span>이면 과매도 상태로 해석합니다.
-          </p>
+        <h2 className="text-xl font-bold">RSI (14)</h2>
+        <p className="text-sm text-gray-300 mt-1">
+          RSI(Relative Strength Index)는 가격의 상승 압력과 하락 압력을 비교하여 매수/매도 강도를 나타냅니다. 일반적으로 70 이상은 과매수, 30 이하이면 과매도로 해석됩니다.
+        </p>
+        <div className="relative w-full h-64">
+          <Line data={rsiChartData} options={{ responsive: true, maintainAspectRatio: false }} />
         </div>
-        <Line data={rsiChartData} />
       </div>
-
-      {/* MACD 영역 */}
-      <div className="mb-4 text-left">
+      <div className="mb-4">
         <h2 className="text-xl font-bold">MACD</h2>
         <p className="text-sm text-gray-300 mt-1">
-          MACD(Moving Average Convergence Divergence)는 단기(보통 12기간)와 장기(보통 26기간) 이동평균의 차이를 나타냅니다.
-          <br /><br />
-          <span className="font-semibold">시그널 선</span>은 MACD의 9기간 이동평균으로, MACD 선과의 차이를 보여줍니다.
-          MACD 선이 시그널 선을 상향 돌파하면 매수 신호, 하향 돌파하면 매도 신호로 해석할 수 있습니다.
-          <br /><br />
-          <span className="font-semibold">히스토그램</span>은 MACD 선과 시그널 선의 차이를 나타내며,
-          양수이면 상승 모멘텀이 강하다는 의미, 음수이면 하락 모멘텀이 강하다는 의미로 해석할 수 있습니다.
+          MACD는 단기와 장기 이동평균의 차이를 나타내며, 시그널 선과의 교차로 매수/매도 신호를 제공합니다.
         </p>
+        <div className="relative w-full h-64">
+          <Line data={macdChartData} options={{ responsive: true, maintainAspectRatio: false }} />
+        </div>
       </div>
-      <Line data={macdChartData} />
     </div>
   );
 }
