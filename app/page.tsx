@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import ChartComponent from './components/ChartComponent';
+import MarketTrendChart from './components/MarketTrendChart';
 import Image from 'next/image';
 
 const symbols = [
@@ -19,6 +20,22 @@ const symbols = [
   { id: 'LTC', icon: 'https://assets.coingecko.com/coins/images/2/large/litecoin.png' },
   { id: 'PEPE', icon: 'https://assets.coingecko.com/coins/images/29850/large/pepe-token.jpeg' },
 ];
+
+// Coingecko의 코인 ID 매핑
+const coingeckoMap: { [key: string]: string } = {
+  BTC: 'bitcoin',
+  ETH: 'ethereum',
+  XRP: 'ripple',
+  SOL: 'solana',
+  BNB: 'binancecoin',
+  DOGE: 'dogecoin',
+  TRX: 'tron',
+  LINK: 'chainlink',
+  TON: 'the-open-network',
+  SUI: 'sui',
+  LTC: 'litecoin',
+  PEPE: 'pepe',
+};
 
 export default function Home() {
   const [selectedSymbol, setSelectedSymbol] = useState('');
@@ -59,13 +76,7 @@ export default function Home() {
               }`}
               disabled={loading}
             >
-              <Image
-                src={icon}
-                alt={id}
-                width={24}
-                height={24}
-                className="w-6 h-6"
-              />
+              <Image src={icon} alt={id} width={24} height={24} className="w-6 h-6" />
               <span>{id}</span>
             </button>
           ))}
@@ -73,24 +84,9 @@ export default function Home() {
 
         {loading && (
           <div className="flex items-center justify-center space-x-2 text-blue-300">
-            <svg
-              className="w-6 h-6 animate-spin"
-              fill="none"
-              viewBox="0 0 24 24"
-            >
-              <circle
-                className="opacity-25"
-                cx="12"
-                cy="12"
-                r="10"
-                stroke="currentColor"
-                strokeWidth="4"
-              />
-              <path
-                className="opacity-75"
-                fill="currentColor"
-                d="M4 12a8 8 0 018-8v8H4z"
-              />
+            <svg className="w-6 h-6 animate-spin" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
             </svg>
             <span>분석 중입니다...</span>
           </div>
@@ -104,6 +100,10 @@ export default function Home() {
             <ReactMarkdown>{analysis}</ReactMarkdown>
             <div className="mt-4">
               <ChartComponent symbol={selectedSymbol} />
+            </div>
+            <div className="mt-4">
+              <h2 className="text-xl font-bold">최근 일주일 가격 동향 📈</h2>
+              <MarketTrendChart coinId={coingeckoMap[selectedSymbol]} />
             </div>
           </div>
         </div>
