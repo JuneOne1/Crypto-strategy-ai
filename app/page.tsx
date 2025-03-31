@@ -21,7 +21,7 @@ const symbols = [
   { id: 'PEPE', icon: 'https://assets.coingecko.com/coins/images/29850/large/pepe-token.jpeg' },
 ];
 
-// Coingecko의 코인 ID 매핑
+// Coingecko ID 매핑
 const coingeckoMap: { [key: string]: string } = {
   BTC: 'bitcoin',
   ETH: 'ethereum',
@@ -60,9 +60,17 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-gray-900 text-white p-2 sm:p-4 flex flex-col items-center">
-      {/* 상단 컨테이너: 버튼 목록 (폭: max-w-3xl) */}
+      {/* 상단 컨테이너: 제품 이름과 설명 (폭: max-w-3xl) */}
       <div className="bg-[#1e1e1e] rounded-xl shadow-md w-full max-w-3xl text-center p-4 sm:p-6 mb-6">
-        <h1 className="text-2xl sm:text-3xl font-bold mb-4">🚀 CryptoStrategy AI</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold mb-2">🚀 CryptoStrategy AI</h1>
+        <div className="mb-4 text-sm text-gray-300">
+          <p>
+            💡 AI 기반 암호화폐 전략 분석 서비스입니다. RSI, MACD, 거래량 등 다양한 기술 지표를 종합하여, 쉽고 빠르게 매수/매도 전략을 제시합니다.
+          </p>
+          <p>
+            📈 원하는 암호화폐 버튼을 클릭해 지금 바로 분석해 보세요! <span className="italic">*본 서비스는 참고용이며, 실제 투자 결정에 따른 책임은 사용자에게 있습니다.</span>
+          </p>
+        </div>
 
         <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 mb-4">
           {symbols.map(({ id, icon }) => (
@@ -76,13 +84,7 @@ export default function Home() {
               }`}
               disabled={loading}
             >
-              <Image
-                src={icon}
-                alt={id}
-                width={24}
-                height={24}
-                className="w-6 h-6"
-              />
+              <Image src={icon} alt={id} width={24} height={24} className="w-6 h-6" />
               <span>{id}</span>
             </button>
           ))}
@@ -90,24 +92,9 @@ export default function Home() {
 
         {loading && (
           <div className="flex items-center justify-center space-x-2 text-blue-300">
-            <svg
-              className="w-6 h-6 animate-spin"
-              fill="none"
-              viewBox="0 0 24 24"
-            >
-              <circle
-                className="opacity-25"
-                cx="12"
-                cy="12"
-                r="10"
-                stroke="currentColor"
-                strokeWidth="4"
-              />
-              <path
-                className="opacity-75"
-                fill="currentColor"
-                d="M4 12a8 8 0 018-8v8H4z"
-              />
+            <svg className="w-6 h-6 animate-spin" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
             </svg>
             <span>분석 중입니다...</span>
           </div>
@@ -118,16 +105,11 @@ export default function Home() {
       {analysis && (
         <div className="bg-[#1e1e1e] rounded-xl shadow-md w-full max-w-3xl p-4 sm:p-6 mb-6">
           <div className="text-left bg-[#2e2e2e] p-4 rounded-md leading-relaxed tracking-wide markdown-report">
-            {/* 최근 7일 가격 차트를 먼저 보여줌 */}
-            <MarketTrendChart
-              coinId={coingeckoMap[selectedSymbol]}
-              symbol={selectedSymbol}
-            />
-
-            {/* 그 뒤 GPT 분석 보고서 */}
+            {/* 최근 일주일 가격 동향 차트 */}
+            <MarketTrendChart coinId={coingeckoMap[selectedSymbol]} symbol={selectedSymbol} />
+            {/* GPT 분석 보고서 */}
             <ReactMarkdown>{analysis}</ReactMarkdown>
-
-            {/* 차트Component (RSI, MACD) */}
+            {/* RSI/MACD 차트 */}
             <div className="mt-4">
               <ChartComponent symbol={selectedSymbol} />
             </div>
