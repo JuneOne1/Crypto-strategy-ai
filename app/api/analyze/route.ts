@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 export async function POST(req: NextRequest) {
   try {
     const { symbol } = await req.json();
+
     const coinIdMap: { [key: string]: string } = {
       BTC: 'bitcoin',
       ETH: 'ethereum',
@@ -23,10 +24,20 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: '지원되지 않는 암호화폐입니다.' }, { status: 400 });
     }
 
-    const priceRes = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${coinId}&vs_currencies=usd`);
+    const priceRes = await fetch(
+      `https://api.coingecko.com/api/v3/simple/price?ids=${coinId}&vs_currencies=usd`
+    );
     const priceData = await priceRes.json();
-    const currentPrice = priceData[coinId].usd;
+    const currentPrice = priceData[coinId]?.usd;
+    if (!currentPrice) {
+      return NextResponse.json(
+        { error: '현재 가격 정보를 가져올 수 없습니다.' },
+        { status: 400 }
+      );
+    }
 
+    // GPT-4 API 호출: 프롬프트 내용을 더 상세하게 작성하여, 
+    // 리스크 대비 수익률, 성공 확률, 기술적 지표(RSI, MACD, 거래량 등)의 근거를 포함하도록 합니다.
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -34,80 +45,41 @@ export async function POST(req: NextRequest) {
         'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
       },
       body: JSON.stringify({
-        model: 'gpt-3.5-turbo',
+        model: 'gpt-4o',
         messages: [
           {
             role: 'system',
             content: `
-            당신은 전문 암호화폐 트레이딩 전략가입니다.
-            제공받은 암호화폐의 실시간 가격(USD)을 바탕으로, 아래 형식을 정확히 따라 전략 보고서를 작성합니다.
-          
-            각 **대주제(매수 전략, 매도 전략, 최적 전략)** 전후에는 빈 줄을 **반드시 2줄** 넣으세요.  
-            또한 **소주제(번호가 붙은 항목)** 사이에도 **반드시 빈 줄을 1줄 추가**해 명확히 구분합니다.
-          
-            보고서 양식(정확히 따를 것):
-          
-          
-            # 📊 암호화폐 트레이딩 전략 보고서
-          
-          
-            ## 📌 매수(Long) 전략 🚀
-          
-            ### 1. 진입 가격 범위 (USD)
-            - $XX,XXX ~ $XX,XXX
-          
-            ### 2. 목표 가격 및 기대 수익률
-            - TP1: $XX,XXX | 예상 수익률: X.XX% | 성공 확률: XX%
-            - TP2: $XX,XXX | 예상 수익률: X.XX% | 성공 확률: XX%
-          
-            ### 3. 손절 가격(Stop Loss) 및 리스크
-            - 손절 가격: $XX,XXX (리스크: X.XX%)
-          
-            ### 4. 최종 기대 수익률 및 리스크 대비 수익(R/R 비율)
-            - 최종 기대 수익률: X.XX%
-            - 리스크 대비 수익(R/R): X.XX : 1
-          
-            ### 5. 전략의 기술적 근거 분석
-            - 최소 2가지 기술적 지표로 구체적이고 명확히 설명 (2줄 이상)
-          
-          
-            ## 📌 매도(Short) 전략 ⛔️
-          
-            ### 1. 진입 가격 범위 (USD)
-            - $XX,XXX ~ $XX,XXX
-          
-            ### 2. 목표 가격 및 기대 수익률
-            - TP1: $XX,XXX | 예상 수익률: X.XX% | 성공 확률: XX%
-            - TP2: $XX,XXX | 예상 수익률: X.XX% | 성공 확률: XX%
-          
-            ### 3. 손절 가격(Stop Loss) 및 리스크
-            - 손절 가격: $XX,XXX (리스크: X.XX%)
-          
-            ### 4. 최종 기대 수익률 및 리스크 대비 수익(R/R 비율)
-            - 최종 기대 수익률: X.XX%
-            - 리스크 대비 수익(R/R): X.XX : 1
-          
-            ### 5. 전략의 기술적 근거 분석
-            - 최소 2가지 기술적 지표로 구체적이고 명확히 설명 (2줄 이상)
-          
-          
-            ## 📌 최적 전략 추천 및 결론 💡
-            - 두 전략을 비교하여 더 나은 전략을 추천하고, 추천 이유를 명확히 2줄 이상 설명합니다.
-          
-            반드시 지켜야 할 사항:
-            - **대주제 전후에는 2줄의 빈 줄 삽입**
-            - **소주제 사이에는 반드시 1줄의 빈 줄 삽입**
-          
-            각 항목과 내용은 반드시 명확히 구분될 수 있도록 합니다.
-            `,
+당신은 전문 암호화폐 트레이딩 전략가입니다. 아래 지시사항에 따라, 주어진 암호화폐의 현재 시장 가격과 기술적 지표(예: RSI, MACD, 거래량)를 기반으로 매우 구체적인 매수(Long) 및 매도(Short) 전략을 한국어로 작성하세요.
+
+응답은 반드시 아래 형식을 따라 작성합니다:
+
+────────────────────────────
+📌 매수(Long) 전략:
+1. 진입 가격 범위 (USD): 구체적인 가격 범위를 제시합니다.
+2. 목표 가격 (TP1, TP2): 각 목표 가격과 예상 수익률(%) 및 성공 확률(%)을 제시합니다.
+3. 손절 가격 (Stop Loss): 구체적인 가격과 예상 리스크(%)를 명시합니다.
+4. 최종 기대 수익률: 계산된 예상 수익률(%)을 제공합니다.
+5. 리스크 대비 보상 비율 (R/R): (목표가격 - 진입가격) ÷ (진입가격 - 손절가격) 계산 예시 포함. 
+   예를 들어, 진입가격이 $100, 목표가격이 $120, 손절가격이 $90이면, (120-100)/(100-90)=20/10=2:1.
+6. 전략 근거: RSI, MACD, 거래량 등의 기술적 지표 분석과, 각 지표가 매수 신호로 작용하는 이유를 구체적으로 설명합니다.
+────────────────────────────
+📌 매도(Short) 전략:
+위와 유사한 형식으로, 단기적 하락 모멘텀에 기반한 전략을 상세히 제시합니다.
+────────────────────────────
+📌 최적 전략 추천:
+매수(Long)과 매도(Short) 전략을 비교하여, 가장 유리한 전략과 그 이유를 명확히 설명합니다.
+────────────────────────────
+추가 사항:
+- RSI는 보통 14 기간을 사용하며, 30 이하이면 과매도, 70 이상이면 과매수로 해석합니다.
+- MACD는 단기(12 기간)와 장기(26 기간) 이동평균의 차이로 계산하며, 시그널 선(9 기간 이동평균)과의 교차를 통해 신호를 제공합니다.
+- 모든 응답은 구체적인 수치와 예시 계산을 포함하여, 매우 상세하게 작성되어야 합니다.
+            `
           },
           {
             role: 'user',
-            content: `
-            "${symbol}"의 현재 시장 가격은 ${currentPrice.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}입니다.
-            위 보고서 양식을 정확히 따라 매우 상세한 트레이딩 전략 보고서를 작성해주세요.
-            `,
-          },
+            content: `"${symbol}"의 현재 시장 가격은 ${currentPrice.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}입니다. 위 지시사항을 기반으로, 매우 상세한 매수(Long) 및 매도(Short) 전략과 최적 전략 추천을 작성해주세요.`
+          }
         ],
         temperature: 0.2,
         max_tokens: 1500,
