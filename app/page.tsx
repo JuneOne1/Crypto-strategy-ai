@@ -76,7 +76,13 @@ export default function Home() {
               }`}
               disabled={loading}
             >
-              <Image src={icon} alt={id} width={24} height={24} className="w-6 h-6" />
+              <Image
+                src={icon}
+                alt={id}
+                width={24}
+                height={24}
+                className="w-6 h-6"
+              />
               <span>{id}</span>
             </button>
           ))}
@@ -84,9 +90,24 @@ export default function Home() {
 
         {loading && (
           <div className="flex items-center justify-center space-x-2 text-blue-300">
-            <svg className="w-6 h-6 animate-spin" fill="none" viewBox="0 0 24 24">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+            <svg
+              className="w-6 h-6 animate-spin"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              />
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8v8H4z"
+              />
             </svg>
             <span>분석 중입니다...</span>
           </div>
@@ -97,13 +118,18 @@ export default function Home() {
       {analysis && (
         <div className="bg-[#1e1e1e] rounded-xl shadow-md w-full max-w-3xl p-4 sm:p-6 mb-6">
           <div className="text-left bg-[#2e2e2e] p-4 rounded-md leading-relaxed tracking-wide markdown-report">
+            {/* 최근 7일 가격 차트를 먼저 보여줌 */}
+            <MarketTrendChart
+              coinId={coingeckoMap[selectedSymbol]}
+              symbol={selectedSymbol}
+            />
+
+            {/* 그 뒤 GPT 분석 보고서 */}
             <ReactMarkdown>{analysis}</ReactMarkdown>
+
+            {/* 차트Component (RSI, MACD) */}
             <div className="mt-4">
               <ChartComponent symbol={selectedSymbol} />
-            </div>
-            <div className="mt-4">
-              <h2 className="text-xl font-bold">최근 일주일 가격 동향 📈</h2>
-              <MarketTrendChart coinId={coingeckoMap[selectedSymbol]} />
             </div>
           </div>
         </div>
