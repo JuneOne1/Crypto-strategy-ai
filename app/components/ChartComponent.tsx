@@ -28,6 +28,35 @@ interface ChartComponentProps {
   symbol: string;
 }
 
+export default function ChartComponent({ symbol }: ChartComponentProps) {
+  // ... (RSI, MACD 계산 로직은 동일)
+
+  // 차트 옵션에서 maintainAspectRatio를 false로 설정
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false, // ← 핵심!
+    scales: {
+      y: {
+        // 예: 필요하면 y축 범위 등 설정
+        beginAtZero: false,
+      },
+    },
+  };
+
+  return (
+    <div className="w-full max-w-xl mx-auto p-4">
+      {/* 
+        컨테이너에 고정 높이를 줘서 차트가 세로로 여유를 갖도록 함
+        예: h-64 => 약 16rem (256px)
+        필요하다면 h-80(320px) 등 다른 값으로 조정 가능
+      */}
+      <div className="relative w-full h-64 sm:h-80">
+        <Line data={/* RSI나 MACD 차트 데이터 */} options={chartOptions} />
+      </div>
+    </div>
+  );
+}
+
 // Binance Kline 타입 정의
 type BinanceKline = [
   openTime: number,
