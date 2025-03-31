@@ -71,7 +71,30 @@ export default function Home() {
           ))}
         </div>
 
-        {loading && <div className="mb-4 text-blue-300">📡 분석 중입니다...</div>}
+        {loading && (
+          <div className="flex items-center justify-center space-x-2 text-blue-300">
+            <svg
+              className="w-6 h-6 animate-spin"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              />
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8v8H4z"
+              />
+            </svg>
+            <span>분석 중입니다...</span>
+          </div>
+        )}
       </div>
 
       {/* 하단 컨테이너: 분석 결과 + 차트 (폭: max-w-3xl) */}
