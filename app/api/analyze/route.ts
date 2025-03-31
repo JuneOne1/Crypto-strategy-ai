@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
         'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
       },
       body: JSON.stringify({
-        model: 'gpt-4o',
+        model: 'gpt-4-turbo', // GPT-4 모델 사용 (계정에 권한이 있어야 합니다)
         messages: [
           {
             role: 'system',
