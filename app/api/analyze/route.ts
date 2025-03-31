@@ -36,8 +36,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // GPT-4 API 호출: 프롬프트 내용을 더 상세하게 작성하여, 
-    // 리스크 대비 수익률, 성공 확률, 기술적 지표(RSI, MACD, 거래량 등)의 근거를 포함하도록 합니다.
+    // GPT 모델을 'gpt-3.5-turbo'로 변경합니다.
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -45,7 +44,7 @@ export async function POST(req: NextRequest) {
         'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
       },
       body: JSON.stringify({
-        model: 'gpt-4-turbo', // GPT-4 모델 사용 (계정에 권한이 있어야 합니다)
+        model: 'gpt-3.5-turbo',
         messages: [
           {
             role: 'system',
