@@ -24,24 +24,39 @@ ChartJS.register(
   Legend
 );
 
+const symbolToId: Record<string, string> = {
+  BTC: 'bitcoin',
+  ETH: 'ethereum',
+  XRP: 'ripple',
+  SOL: 'solana',
+  BNB: 'binancecoin',
+  DOGE: 'dogecoin',
+  TRX: 'tron',
+  LINK: 'chainlink',
+  TON: 'toncoin',
+  SUI: 'sui',
+  LTC: 'litecoin',
+  PEPE: 'pepe', // or appropriate Coingecko ID if different
+};
+
 interface ChartComponentProps {
   symbol: string;
 }
 
-type BinanceKline = [
-  openTime: number,
-  open: string,
-  high: string,
-  low: string,
-  close: string,
-  volume: string,
-  closeTime: number,
-  quoteAssetVolume: string,
-  trades: number,
-  takerBaseAssetVolume: string,
-  takerQuoteAssetVolume: string,
-  ignore: string
-];
+// interface BinanceKline {
+//   openTime: number;
+//   open: string;
+//   high: string;
+//   low: string;
+//   close: string;
+//   volume: string;
+//   closeTime: number;
+//   quoteAssetVolume: string;
+//   trades: number;
+//   takerBaseAssetVolume: string;
+//   takerQuoteAssetVolume: string;
+//   ignore: string;
+// }
 
 interface MACDData {
   MACD: number;
@@ -57,17 +72,23 @@ export default function ChartComponent({ symbol }: ChartComponentProps) {
   useEffect(() => {
     async function fetchData() {
       try {
-        const pair = symbol + 'USDT';
-        const res = await fetch(`https://api.binance.com/api/v3/klines?symbol=${pair}&interval=1h&limit=100`);
-        const ohlc: BinanceKline[] = await res.json();
-        const closes = ohlc.map((candle) => parseFloat(candle[4]));
-        const times = ohlc.map((candle) => new Date(candle[0]).toLocaleTimeString());
-        const rsiValues = RSI.calculate({ values: closes, period: 14 });
+        const coinId = symbolToId[symbol];
+        const res = await fetch(
+          `https://api.coingecko.com/api/v3/coins/${coinId}/market_chart?vs_currency=usd&days=5&interval=hourly`
+        );
+        const data = await res.json();
+        // Coingecko returns data.prices as [timestamp, price][]
+        const prices: number[] = data.prices.map((p: [number, number]) => p[1]);
+        const times: string[] = data.prices.map((p: [number, number]) =>
+          new Date(p[0]).toLocaleString()
+        );
+
+        const rsiValues = RSI.calculate({ values: prices, period: 14 });
         setRsiData(rsiValues);
-        setLabels(times.slice(14));
+        setLabels(times.slice(14));  
 
         const macdValues = MACD.calculate({
-          values: closes,
+          values: prices,
           fastPeriod: 12,
           slowPeriod: 26,
           signalPeriod: 9,
