@@ -38,7 +38,7 @@ const coingeckoMap: { [key: string]: string } = {
 };
 
 export default function Home() {
-  const [selectedSymbol, setSelectedSymbol] = useState('');
+  const [selectedSymbol, setSelectedSymbol] = useState<string | null>(null);
   const [analysis, setAnalysis] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -124,19 +124,19 @@ export default function Home() {
       </div>
 
       {/* 하단 컨테이너: 분석 결과 + 차트 (폭: max-w-3xl) */}
-      {analysis && (
+      {selectedSymbol !== null && (
         <div className="bg-[#1e1e1e] rounded-xl shadow-md w-full max-w-3xl p-4 sm:p-6 mb-6">
           <div className="text-left bg-[#2e2e2e] p-4 rounded-md leading-relaxed tracking-wide markdown-report">
             {/* 최근 일주일 가격 동향 차트 */}
             <MarketTrendChart
-              coinId={coingeckoMap[selectedSymbol]}
-              symbol={selectedSymbol}
+              coinId={coingeckoMap[selectedSymbol!]}
+              symbol={selectedSymbol!}
             />
             {/* GPT 분석 보고서 */}
             <ReactMarkdown>{analysis}</ReactMarkdown>
             {/* RSI/MACD 차트 */}
             <div className="mt-4">
-              <ChartComponent symbol={selectedSymbol} />
+              <ChartComponent symbol={selectedSymbol!} />
             </div>
           </div>
         </div>
