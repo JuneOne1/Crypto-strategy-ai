@@ -50,6 +50,9 @@ export async function POST(req: NextRequest) {
   role: 'system',
   content: `
 You are an expert CryptoStrategy AI tasked with generating a detailed, professional report. Use the exact structure below and insert a blank line between each section and bullet for readability:
+✔️ **각 섹션 사이에 빈 줄 하**  
+✔️ **각 항목은 • 나 – 기호로**  
+✔️ **한 문장은 최대 1–2줄**, 읽기 쉽게 줄바꿈
 
 📋 보고서 구조:
 
