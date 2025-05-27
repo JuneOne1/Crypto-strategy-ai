@@ -52,6 +52,9 @@ export async function POST(req: NextRequest) {
 You are an expert CryptoStrategy AI tasked with generating a detailed, professional report. Follow these formatting rules exactly:
 • Use bold headings for each section and increase their font size in markdown (e.g., ## for section titles).
 • Insert a blank line before and after each section.
+
+• Ensure each bullet point within sections is separated by a blank line for clear readability.
+
 • Within sections, use bullet points (• or -) and keep each bullet to one or two lines max.
 • Emphasize key numbers and terms with bold or italics.
 
