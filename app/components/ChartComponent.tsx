@@ -10,7 +10,9 @@ import {
   Title,
   Tooltip,
   Legend,
+  TimeScale,
 } from 'chart.js';
+import 'chartjs-adapter-date-fns';
 import { Line } from 'react-chartjs-2';
 import { RSI, MACD } from 'technicalindicators';
 
@@ -21,7 +23,8 @@ ChartJS.register(
   LineElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
+  TimeScale
 );
 
 const symbolToId: Record<string, string> = {
@@ -80,7 +83,7 @@ export default function ChartComponent({ symbol }: ChartComponentProps) {
         // Coingecko returns data.prices as [timestamp, price][]
         const prices: number[] = data.prices.map((p: [number, number]) => p[1]);
         const times: string[] = data.prices.map((p: [number, number]) =>
-          new Date(p[0]).toLocaleString()
+          new Date(p[0]).toISOString()
         );
 
         const rsiValues = RSI.calculate({ values: prices, period: 14 });
@@ -109,6 +112,17 @@ export default function ChartComponent({ symbol }: ChartComponentProps) {
       fetchData();
     }
   }, [symbol]);
+
+  const options = {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      x: {
+        type: 'time',
+        time: { unit: 'hour' }
+      }
+    }
+  };
 
   const rsiChartData = {
     labels: labels,
@@ -163,7 +177,7 @@ export default function ChartComponent({ symbol }: ChartComponentProps) {
           RSI(Relative Strength Index)는 가격의 상승 압력과 하락 압력을 비교하여 매수/매도 강도를 나타냅니다. 일반적으로 70 이상은 과매수, 30 이하이면 과매도로 해석됩니다.
         </p>
         <div className="relative w-full h-64">
-          <Line data={rsiChartData} options={{ responsive: true, maintainAspectRatio: false }} />
+          <Line data={rsiChartData} options={options} />
         </div>
       </div>
       <div className="mb-4">
@@ -172,7 +186,7 @@ export default function ChartComponent({ symbol }: ChartComponentProps) {
           MACD는 단기와 장기 이동평균의 차이를 나타내며, 시그널 선과의 교차로 매수/매도 신호를 제공합니다.
         </p>
         <div className="relative w-full h-64">
-          <Line data={macdChartData} options={{ responsive: true, maintainAspectRatio: false }} />
+          <Line data={macdChartData} options={options} />
         </div>
       </div>
     </div>
