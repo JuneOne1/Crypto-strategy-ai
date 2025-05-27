@@ -13,8 +13,8 @@ import {
   Legend,
   TimeScale,
 } from 'chart.js';
-import 'chartjs-adapter-date-fns';
 import { Line } from 'react-chartjs-2';
+import 'chartjs-adapter-date-fns';
 import { RSI, MACD } from 'technicalindicators';
 
 ChartJS.register(
