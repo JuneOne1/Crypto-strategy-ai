@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
-import ChartComponent from './components/ChartComponent';
 import MarketTrendChart from './components/MarketTrendChart';
 import Image from 'next/image';
 
@@ -134,10 +133,6 @@ export default function Home() {
             />
             {/* GPT 분석 보고서 */}
             <ReactMarkdown>{analysis}</ReactMarkdown>
-            {/* RSI/MACD 차트 */}
-            <div className="mt-4">
-              <ChartComponent symbol={selectedSymbol!} />
-            </div>
           </div>
         </div>
       )}

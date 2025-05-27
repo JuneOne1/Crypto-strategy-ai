@@ -1,9 +1,9 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import MarketTrendChart from './MarketTrendChart';
 
-const symbolToId: Record<string, string> = {
+const coingeckoMap: Record<string, string> = {
   BTC: 'bitcoin',
   ETH: 'ethereum',
   XRP: 'ripple',
@@ -18,15 +18,37 @@ const symbolToId: Record<string, string> = {
   PEPE: 'pepe',
 };
 
-interface ChartComponentProps {
-  symbol: string;
-}
+export default function Home() {
+  const [selectedSymbol, setSelectedSymbol] = useState<string | null>(null);
+  const [analysis, setAnalysis] = useState<string | null>(null);
 
-export default function ChartComponent({ symbol }: ChartComponentProps) {
-  const coinId = symbolToId[symbol];
+  const handleClick = async (symbol: string) => {
+    setSelectedSymbol(symbol);
+    // Fetch analysis logic here
+    const fetchedAnalysis = `Analysis for ${symbol}`;
+    setAnalysis(fetchedAnalysis);
+  };
+
   return (
     <main className="container mx-auto p-4">
-      <MarketTrendChart coinId={coinId} symbol={symbol} />
+      <div className="flex space-x-4 mb-4">
+        {Object.keys(coingeckoMap).map((symbol) => (
+          <button
+            key={symbol}
+            onClick={() => handleClick(symbol)}
+            className="px-4 py-2 bg-blue-500 text-white rounded"
+          >
+            {symbol}
+          </button>
+        ))}
+      </div>
+
+      {analysis && (
+        <div className="border p-4 rounded">
+          <MarketTrendChart coinId={coingeckoMap[selectedSymbol!]} symbol={selectedSymbol!} />
+          <p className="mt-4">{analysis}</p>
+        </div>
+      )}
     </main>
   );
 }
