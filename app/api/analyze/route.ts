@@ -47,8 +47,8 @@ export async function POST(req: NextRequest) {
         model: 'gpt-3.5-turbo',
         messages: [
           {
-  role: 'system',
-  content: `
+            role: 'system',
+            content: `
 You are an expert CryptoStrategy AI tasked with generating a detailed, professional report. Follow these formatting rules exactly:
 
 • Use bold headings for each section and increase their font size in markdown (e.g., ## for section titles).
@@ -108,13 +108,13 @@ Report structure:
 
 📌 모든 숫자는 실시간 가격을 기준으로 계산됩니다. 보고서는 한국어로 작성하며, 이모지와 마크다운 표를 활용해 가독성을 높이세요.
 `
-},
+          },
           {
             role: 'user',
             content: `
 "${symbol}"의 현재 시장 가격은 ${currentPrice.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}입니다.
 위 보고서 형식을 엄격히 따라, 매수/매도 전략과 최적 전략을 매우 상세하게 작성해 주세요.
-            `
+    `
           }
         ],
         temperature: 0.3,

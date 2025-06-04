@@ -123,7 +123,7 @@ export default function Home() {
       </div>
 
       {/* 하단 컨테이너: 분석 결과 + 차트 (폭: max-w-3xl) */}
-      {selectedSymbol !== null && (
+      {analysis && (
         <div className="bg-[#1e1e1e] rounded-xl shadow-md w-full max-w-3xl p-4 sm:p-6 mb-6">
           <div className="text-left bg-[#2e2e2e] p-4 rounded-md leading-relaxed tracking-wide markdown-report">
             {/* 최근 일주일 가격 동향 차트 */}
